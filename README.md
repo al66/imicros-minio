@@ -6,18 +6,19 @@
 $ npm install imicros-minio --save
 ```
 ## Dependencies
-Requires a running [Minio](https://min.io/) instance
+Requires a running [Minio](https://min.io/) instance.
+Requires a running [imicros-keys](https://github.com/al66/imicros-keys) service for encryption key management.
 
 # Usage
 ## Preconditions
-Authentication: the service expects user id and email to be set in ctx.meta data as follows:
+Authentication: the service expects user id and email to be set in ctx.meta data as follows (refer to [imicros-auth](https://github.com/al66/imicros-auth)):
 ```
 ctx.meta.user = {
     id: 'unique ID of the user (number or string)',
     email: 'user@test.org'
 }
 ```
-Authorization: the service expects acl data have been set in ctx.meta data as follows (refer to imicros-acl):
+Authorization: the service expects acl data have been set in ctx.meta data as follows (refer to [imicros-acl](https://github.com/al66/imicros-acl)):
 ```
 ctx.meta.acl = {
     owner: {
