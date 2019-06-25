@@ -7,6 +7,7 @@ $ npm install imicros-minio --save
 ```
 ## Dependencies
 Requires a running [Minio](https://min.io/) instance.
+
 Requires a running [imicros-keys](https://github.com/al66/imicros-keys) service for encryption key management.
 
 # Usage
