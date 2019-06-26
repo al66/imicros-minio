@@ -22,9 +22,7 @@ ctx.meta.user = {
 Authorization: the service expects acl data have been set in ctx.meta data as follows (refer to [imicros-acl](https://github.com/al66/imicros-acl)):
 ```
 ctx.meta.acl = {
-    owner: {
-        id: 'unique ID of the ressource owner (number or string)',
-    },
+    ownerId: 'unique ID of the ressource owner (number or string)',
     ... 
     unrestricted: true, " in case of unrestricted access is granted for the owner
     ... or
