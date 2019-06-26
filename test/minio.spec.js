@@ -78,9 +78,7 @@ describe("Test store service", () => {
                 meta: { 
                     acl: {
                         accessToken: "this is the access token",
-                        owner: {
-                            id: `g1-${timestamp}`
-                        },
+                        ownerId: `g1-${timestamp}`,
                         unrestricted: true
                     }, 
                     user: { 
@@ -96,18 +94,18 @@ describe("Test store service", () => {
             return broker.call("minio.makeBucket", params, opts).then(res => {
                 expect(res).toBeDefined();
                 expect(res.bucketName).toBeDefined();
-                expect(res.bucketName).toEqual(opts.meta.acl.owner.id);
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
             
         });
         
         it("it should create a bucket for 2. owner", () => {
-            opts.meta.acl.owner.id = `g2-${timestamp}`;
+            opts.meta.acl.ownerId = `g2-${timestamp}`;
             let params = {};
             return broker.call("minio.makeBucket", params, opts).then(res => {
                 expect(res).toBeDefined();
                 expect(res.bucketName).toBeDefined();
-                expect(res.bucketName).toEqual(opts.meta.acl.owner.id);
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
             
         });
@@ -123,9 +121,7 @@ describe("Test store service", () => {
                 meta: { 
                     acl: {
                         accessToken: "this is the access token",
-                        owner: {
-                            id: `g1-${timestamp}`
-                        },
+                        ownerId: `g1-${timestamp}`,
                         unrestricted: true
                     }, 
                     user: { 
@@ -146,7 +142,7 @@ describe("Test store service", () => {
                 expect(res).toBeDefined();
                 expect(res.objectName).toBeDefined();
                 expect(res.objectName).toEqual("imicros.png");
-                expect(res.bucketName).toEqual(opts.meta.acl.owner.id);
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
             
         });
@@ -162,7 +158,7 @@ describe("Test store service", () => {
                 expect(res).toBeDefined();
                 expect(res.objectName).toBeDefined();
                 expect(res.objectName).toEqual("big.txt");
-                expect(res.bucketName).toEqual(opts.meta.acl.owner.id);
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
             
         });
@@ -198,7 +194,7 @@ describe("Test store service", () => {
                     expect(res).toBeDefined();
                     expect(res.objectName).toBeDefined();
                     expect(res.objectName).toEqual("imicros_"+i+".png" );
-                    expect(res.bucketName).toEqual(opts.meta.acl.owner.id);
+                    expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
                 });
             }
             
@@ -276,7 +272,7 @@ describe("Test store service", () => {
                 expect(res).toBeDefined();
                 expect(res.objectName).toBeDefined();
                 expect(res.objectName).toEqual("imicros.png");
-                expect(res.bucketName).toEqual(opts.meta.acl.owner.id);
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
             
         });
@@ -321,9 +317,7 @@ describe("Test store service", () => {
                 meta: { 
                     acl: {
                         accessToken: "this is the access token",
-                        owner: {
-                            id: `g1-${timestamp}`
-                        },
+                        ownerId: `g1-${timestamp}`,
                         unrestricted: true
                     }, 
                     user: { 
@@ -339,18 +333,18 @@ describe("Test store service", () => {
             return broker.call("minio.removeBucket", params, opts).then(res => {
                 expect(res).toBeDefined();
                 expect(res.bucketName).toBeDefined();
-                expect(res.bucketName).toEqual(opts.meta.acl.owner.id);
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
             
         });
         
         it("it should remove bucket for 2. owner", () => {
-            opts.meta.acl.owner.id = `g2-${timestamp}`;
+            opts.meta.acl.ownerId = `g2-${timestamp}`;
             let params = {};
             return broker.call("minio.removeBucket", params, opts).then(res => {
                 expect(res).toBeDefined();
                 expect(res.bucketName).toBeDefined();
-                expect(res.bucketName).toEqual(opts.meta.acl.owner.id);
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
             
         });
