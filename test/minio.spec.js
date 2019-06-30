@@ -36,8 +36,9 @@ const Keys = {
 
 describe("Test store service", () => {
 
-    let broker, service, keyService;
+    let broker, service, keyService, adminGroup;
     beforeAll(() => {
+        adminGroup = uuid();
     });
     
     afterAll(async () => {
@@ -58,7 +59,8 @@ describe("Test store service", () => {
                         endPoint: process.env.MINIO_ENDPOINT || "play.minio.io",
                         port: process.env.MINIO_PORT || "9000",
                         useSSL: false
-                    }
+                    },
+                    adminGroup: adminGroup
                 },
                 dependencies: ["keys"]
             }));
@@ -297,7 +299,7 @@ describe("Test store service", () => {
     describe("Test admin", () => {
     
         it("it should list all buckets", async () => {
-            let opts = { meta: { acl: { service: "admin" } } };
+            let opts = { meta: { acl: { ownerId: adminGroup } } };
             let params = {
             };
             let res = await broker.call("minio.listBuckets", params, opts);

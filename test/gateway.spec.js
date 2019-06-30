@@ -4,7 +4,6 @@ const { ServiceBroker } = require("moleculer");
 const { Minio } = require("../index");
 const ApiGateway = require("moleculer-web");
 const request = require("supertest");
-//const Busboy = require("busboy");
 
 const fs = require("fs");
 const uuid = require("uuid/v4");
@@ -41,51 +40,98 @@ const Keys = {
 let meta;
 const Gateway = {
     settings: {
-        routes: [{
-            path: "/upload",
-
-            bodyParsers: {
-                json: false
-            },
-
-            aliases: {
-				// File upload from HTML form
-                "POST /": "multipart:minio.putObject",
-
-				// File upload from AJAX or cURL
-                "PUT /": "stream:minio.putObject",
-
-				// File upload from HTML form and overwrite busboy config
-                "POST /multi": {
-                    type: "multipart",
-                    // Action level busboy config
-                    busboyConfig: {
-                        limits: {
-                            files: 3
-                        }
-                    },
-                    action: "minio.putObject"
-                }
-            },
-
-            //onBeforeCall(ctx, route, req, res) {
-            onBeforeCall(ctx, route, req) {
-                // Set additional context meta - for test only!
-                Object.assign(ctx.meta,meta);
+        routes: [
+            {
+                path: "/",
                 
-                _.set(ctx, "meta.filename",req.headers["x-imicros-filename"]);
-                _.set(ctx, "meta.mimetype",req.headers["x-imicros-mimetype"]);
-            },            
-            
-            // https://github.com/mscdex/busboy#busboy-methods
-            busboyConfig: {
-                limits: {
-                    files: 1
+                bodyParsers: {
+                    json: true
                 },
-                onFilesLimit: jest.fn()
+
+                onBeforeCall(ctx) {
+                    // Set additional context meta - for test only!
+                    Object.assign(ctx.meta,meta);
+                },
+                authorization: true
             },
-        }]
-    }    
+            {
+                path: "/user",
+                
+                bodyParsers: {
+                    json: true
+                },
+
+                onBeforeCall(ctx) {
+                    // Set additional context meta - for test only!
+                    Object.assign(ctx.meta,meta);
+                },
+
+                aliases: {
+                    "POST /user/create": "user.create"
+                }/*,
+                authorization: true
+                */
+            },
+            {
+                path: "/files",
+
+                bodyParsers: {
+                    json: false
+                },
+
+                aliases: {
+                    // File upload from HTML form
+                    "POST /": "multipart:minio.putObject",
+
+                    // File upload from AJAX or cURL
+                    "PUT /:objectName": "stream:minio.putObject",
+
+                    // File upload from HTML form and overwrite busboy config
+                    "POST /multi": {
+                        type: "multipart",
+                        // Action level busboy config
+                        busboyConfig: {
+                            limits: {
+                                files: 3
+                            }
+                        },
+                        action: "minio.putObject"
+                    },
+                    
+                    "GET /:objectName": "minio.getObject",
+                    
+                    "GET /stat/:objectName": "minio.statObject",
+                    
+                    "DELETE /:objectName": "minio.removeObject"
+                },
+                authorization: true,
+
+                //onBeforeCall(ctx, route, req, res) {
+                onBeforeCall(ctx, route, req) {
+                    // Set additional context meta - for test only!
+                    Object.assign(ctx.meta,meta);
+                    
+                    _.set(ctx, "meta.filename",_.get(req,"$params.objectName",req.headers["x-imicros-filename"]));
+                    _.set(ctx, "meta.mimetype",req.headers["x-imicros-mimetype"]);
+                },            
+            
+                // https://github.com/mscdex/busboy#busboy-methods
+                busboyConfig: {
+                    limits: {
+                        files: 1
+                    },
+                    onFilesLimit: jest.fn()
+                },
+            }]
+    },
+    methods: {
+        //authorize(ctx, route, req) {
+        authorize(ctx, route) {            
+            if (route.path === "/upload") console.log(route.path);
+            return Promise.resolve();
+        }
+    }
+    
 };
 
 describe("Test upload to store service", () => {
@@ -194,7 +240,7 @@ describe("Test upload to store service", () => {
         it("it should upload file with multipart", () => {
             meta = opts.meta;
             return request(server)
-                .post("/upload")
+                .post("/files")
                 .attach("imicros.png","assets/imicros.png")
                 .then(res => {
                     expect(res.statusCode).toBe(200);
@@ -206,7 +252,7 @@ describe("Test upload to store service", () => {
         it("it should upload multiple file with multipart", () => {
             meta = opts.meta;
             return request(server)
-                .post("/upload/multi")
+                .post("/files/multi")
                 .attach("imicros_1.png","assets/imicros.png")
                 .attach("imicros_2.png","assets/imicros.png")
                 .then(res => {
@@ -222,8 +268,7 @@ describe("Test upload to store service", () => {
             opts.meta.store = null;
             meta = opts.meta;
             return request(server)
-                .put("/upload")
-                .set("x-imicros-filename","imicros.png")
+                .put("/files/imicros.png")
                 .set("x-imicros-mimetype","image/png")
                 .send(buffer)
                 .then(res => {
@@ -235,36 +280,34 @@ describe("Test upload to store service", () => {
         });
 
         it("it should get an object", async () => {
-            let fstream = fs.createWriteStream("assets/imicros.restored.png");
-            let params = {
-                objectName: "imicros.png"      
-            };
-            function receive(stream) {
+            meta = opts.meta;
+            function receive() {
                 return new Promise(resolve => {
-                    stream.pipe(fstream);
-                    fstream.on("close", () => {
-                        resolve();
-                    });
+                    request(server)
+                        .get("/files/imicros.png")
+                        .expect(200)
+                        .pipe(fs.createWriteStream("assets/get.imicros.png"))
+                        .on("finish", resolve());
                 });
             } 
-            
-            let stream = await broker.call("minio.getObject", params, opts);
-            await receive(stream);
+            await receive();
         });
 
         it("it should get meta data of an object", () => {
-            let params = {
-                objectName: "imicros.png"      
-            };
-            return broker.call("minio.statObject", params, opts).then(res => {
-                expect(res).toBeDefined();
-                expect(res.size).toBeDefined();
-                expect(res.lastModified).toBeDefined();
-                expect(res.etag).toBeDefined();
-                expect(res.metaData).toBeDefined();
-                expect(res.metaData.iv).toBeDefined();
-                expect(res.metaData.oek).toBeDefined();
-            });
+            meta = opts.meta;
+            return request(server)
+                .get("/files/stat/imicros.png")
+                .then(res => {
+                    expect(res.statusCode).toBe(200);
+                    expect(res.body).toBeDefined();
+                    //console.log(res.body);
+                    expect(res.body.size).toBeDefined();
+                    expect(res.body.lastModified).toBeDefined();
+                    expect(res.body.etag).toBeDefined();
+                    expect(res.body.metaData).toBeDefined();
+                    expect(res.body.metaData.iv).toBeDefined();
+                    expect(res.body.metaData.oek).toBeDefined();
+                });
             
         });
 
@@ -278,6 +321,7 @@ describe("Test upload to store service", () => {
         });
         
         it("it should remove an object", () => {
+            /*
             let params = {
                 objectName: "imicros.png"      
             };
@@ -287,6 +331,16 @@ describe("Test upload to store service", () => {
                 expect(res.objectName).toEqual("imicros.png");
                 expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
+            */
+
+            meta = opts.meta;
+            return request(server)
+                .delete("/files/imicros.png")
+                .then(res => {
+                    expect(res.statusCode).toBe(200);
+                    expect(res.body.objectName).toEqual("imicros.png");
+                    expect(res.body.bucketName).toEqual(opts.meta.acl.ownerId);
+                });
             
         });
 

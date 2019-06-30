@@ -9,7 +9,8 @@
     "lint": "eslint . --ext .js,.jsx",
     "test": "jest --coverage --no-cache",
     "test-local": "jest --coverage --no-cache --config=local.js",
-    "test-upload": "jest test/upload.spec.js --no-cache --config=local.js"
+    "test-unit": "jest test/minio.spec.js --no-cache --config=local.js",
+    "test-gateway": "jest test/gateway.spec.js --no-cache --config=local.js"
   },
   "jest": {
     "collectCoverageFrom": [
