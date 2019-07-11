@@ -4,5 +4,6 @@
 "use strict";
 
 module.exports = {
-    Minio: require("./lib/minio")
+    Minio: require("./lib/minio"),
+    MinioMixin: require("./lib/minio.mixin")
 };

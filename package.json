@@ -10,6 +10,7 @@
     "test": "jest --coverage --no-cache",
     "test-local": "jest --coverage --no-cache --config=local.js",
     "test-unit": "jest test/minio.spec.js --no-cache --config=local.js",
+    "test-mixin": "jest test/minio.mixin.spec.js --no-cache --config=local.js",
     "test-gateway": "jest test/gateway.spec.js --no-cache --config=local.js"
   },
   "jest": {
@@ -42,7 +43,6 @@
     "lodash": "^4.17.11",
     "minio": "^7.0.10",
     "moleculer-web": "git+https://github.com/moleculerjs/moleculer-web.git",
-    "save-dev": "^2.0.0",
     "uuid": "^3.3.2"
   }
 }
