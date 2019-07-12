@@ -1,6 +1,7 @@
 # imicros-minio
 ![NpmLicense](https://img.shields.io/npm/l/imicros-minio.svg)
 ![npm](https://img.shields.io/npm/v/imicros-minio.svg)
+
 [Moleculer](https://github.com/moleculerjs/moleculer) service for minio object storage (with authentification by imicros-auth and authorization by imicros-acl) 
 
 ## Installation
@@ -59,7 +60,7 @@ service = broker.createService(Minio, Object.assign({
 broker.start();
 
 ```
-## Actions (minio service)
+### Actions (minio service)
 - makeBucket { region } => { bucketName = ctx.meta.acl.owner.id, region }
 - removeBucket { } => { bucketName = ctx.meta.acl.owner.id, region }
 - putObject { ReadableStream } => { bucketName = ctx.meta.acl.owner.id, objectName }
@@ -70,3 +71,35 @@ broker.start();
 - listObjects { prefix, recursive, startAfter} => { ReadableStream obj }
 - listObjectsArray { prefix, recursive, startAfter} => [ obj ]
 - listBuckets { } => [ bucket ]    only for admin service
+
+## Usage minio mixin
+The bucket for the owner must be created before using the mixin.
+
+Require the Mixin
+```js
+const { MinioMixin } = require("imicros-minio");
+```
+Assign it to your moleculer service under property mixins
+```js
+broker.createService(MyService, Object.assign({ 
+                mixins: [MinioMixin({ service: "v1.minio" })]  // pass the name of the running minio service
+            }));
+```
+### Method getStream
+```js 
+let fstream = fs.createWriteStream("myDesiredFileName.any");
+let stream = await this.getStream({ ctx: ctx, objectName: "myObjectKeyExistingInMinio" });
+stream.pipe(fstream);
+ 
+```
+### Method putStream
+```js 
+let fstream = fs.createReadStream("myExistingFile.any");
+let result = await this.putStream({ ctx: ctx, objectName: "myDesiredObjectKeyInMinio", stream: fstream });
+```
+### Method pipeStream
+```js 
+let fstream = fs.createReadStream("myExistingFile.any");
+let stream = await this.pipeStream({ ctx: ctx, objectName: "myDesiredObjectKeyInMinio" });  // get writable stream
+fstream.pipe(stream);
+```
