@@ -1,4 +1,6 @@
 # imicros-minio
+![NpmLicense](https://img.shields.io/npm/l/imicros-minio.svg)
+![npm](https://img.shields.io/npm/v/imicros-minio.svg)
 [Moleculer](https://github.com/moleculerjs/moleculer) service for minio object storage (with authentification by imicros-auth and authorization by imicros-acl) 
 
 ## Installation
