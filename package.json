@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "imicros-acl": "0.0.3",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "minio": "^7.0.10",
     "moleculer-web": "git+https://github.com/moleculerjs/moleculer-web.git",
     "uuid": "^3.3.2"
