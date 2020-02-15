@@ -286,7 +286,7 @@ describe("Test upload to store service", () => {
                     request(server)
                         .get("/files/imicros.png")
                         .expect(200)
-                        .pipe(fs.createWriteStream("assets/get.imicros.png"))
+                        .pipe(fs.createWriteStream("assets/gateway.get.imicros.png"))
                         .on("finish", resolve());
                 });
             } 
