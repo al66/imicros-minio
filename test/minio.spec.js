@@ -33,6 +33,19 @@ const Keys = {
     } 
 };
 
+const middleware = {
+    // wrap local action - call acl 
+    localAction(next, action) {
+        return async function(ctx) {
+            ctx.broker.logger.info("call wrapped action", { action: action.name });
+            return next(ctx);
+        };
+    },
+    
+    async started(broker) {
+        broker.logger.info("Middelware - broker started");
+    }
+};
 
 describe("Test store service", () => {
 
@@ -48,6 +61,7 @@ describe("Test store service", () => {
 
         it("it should start the broker", async () => {
             broker = new ServiceBroker({
+                middlewares: [middleware],
                 logger: console,
                 logLevel: "info" //"debug"
             });
