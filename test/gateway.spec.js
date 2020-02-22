@@ -114,7 +114,7 @@ const Gateway = {
                         action: "minio.putObject"
                     },
                     
-                    "GET /:objectName": "minio.getObject",
+                    "GET /:objectName*": "minio.getObject",
                     
                     "GET /stat/:objectName": "minio.statObject",
                     
@@ -320,6 +320,50 @@ describe("Test upload to store service", () => {
             await receive();
         });
 
+        /*
+        it("it should upload path+file with multipart", () => {
+            meta = opts.meta;
+            return request(server)
+                .post("/files")
+                .attach("path/imicros_with_path.png","assets/imicros.png")
+                .then(res => {
+                    expect(res.statusCode).toBe(200);
+                    expect(res.body).toEqual(expect.arrayContaining([expect.objectContaining({ objectName: "path/imicros_with_path.png" })]));
+                    //console.log(res.body);
+                })
+                .catch( err => console.log(err));
+        });
+        */
+        
+        it("it should put an object to an folder", () => {
+            let fstream = fs.createReadStream("assets/imicros.png");
+            opts.meta.store = {
+                objectName: "path/imicros_with_path.png"      
+            };
+            return broker.call("minio.putObject", fstream, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res.objectName).toBeDefined();
+                expect(res.objectName).toEqual("path/imicros_with_path.png");
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
+            });
+            
+        });
+
+        it("it should get an object from a folder", async () => {
+            meta = opts.meta;
+            function receive() {
+                return new Promise(resolve => {
+                    request(server)
+                        .get("/files/path/imicros_with_path.png")
+                        .expect(200)
+                        .pipe(fs.createWriteStream("assets/gateway.path.get.imicros.png"))
+                        .on("finish", resolve())
+                        .on("error", (err) => console.log(err));
+                });
+            } 
+            await receive();
+        });
+
         it("it should get meta data of an object", () => {
             meta = opts.meta;
             return request(server)
@@ -378,6 +422,7 @@ describe("Test upload to store service", () => {
             for (let i=1; i<3; i++) {
                 params.objectsList.push("imicros_"+i+".png");
             }
+            params.objectsList.push("path/imicros_with_path.png");
             return broker.call("minio.removeObjects", params, opts).then(res => {
                 expect(res).toBeDefined();
                 expect(res).toEqual(true);
