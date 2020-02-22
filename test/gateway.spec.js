@@ -53,6 +53,8 @@ const middleware = {
 
 let meta;
 const Gateway = {
+    name: "gateway",
+    dependencies: ["minio"],
     settings: {
         routes: [
             {
@@ -150,7 +152,7 @@ const Gateway = {
 
 describe("Test upload to store service", () => {
 
-    let broker, service, keyService,gatewayService, server;
+    let gatewayBroker, broker, service, keyService,gatewayService, server;
     beforeAll(() => {
     });
     
@@ -161,11 +163,20 @@ describe("Test upload to store service", () => {
 
         it("it should start the broker", async () => {
             broker = new ServiceBroker({
+                nodeID: "node-1",
                 middlewares: [middleware],
+                transporter: "tcp://localhost:6001/node-1,localhost:6002/node-2",
+                logger: console,
+                logLevel: "debug" // "info" //"debug"
+            });
+            gatewayBroker = new ServiceBroker({
+                nodeID: "node-2",
+                middlewares: [middleware],
+                transporter: "tcp://localhost:6001/node-1,localhost:6002/node-2",
                 logger: console,
                 logLevel: "info" //"debug"
             });
-            gatewayService = await broker.createService(ApiGateway,Gateway);
+            gatewayService = await gatewayBroker.createService(ApiGateway,Gateway);
             keyService = await broker.createService(Keys);
             service = await broker.createService(Minio, Object.assign({ 
                 name: "minio", 
@@ -179,6 +190,7 @@ describe("Test upload to store service", () => {
                 dependencies: ["keys"]
             }));
             await broker.start();
+            await gatewayBroker.start();
             server = gatewayService.server;
             expect(service).toBeDefined();
             expect(keyService).toBeDefined();
@@ -410,6 +422,7 @@ describe("Test upload to store service", () => {
     describe("Test stop broker", () => {
         it("should stop the broker", async () => {
             expect.assertions(1);
+            await gatewayBroker.stop();
             await broker.stop();
             expect(broker).toBeDefined();
         });
