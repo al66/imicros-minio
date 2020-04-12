@@ -107,3 +107,15 @@ let fstream = fs.createReadStream("myExistingFile.any");
 let stream = await this.pipeStream({ ctx: ctx, objectName: "myDesiredObjectKeyInMinio" });  // get writable stream
 fstream.pipe(stream);
 ```
+### Method putString
+```js 
+let s = "any string";
+let result = await this.putString({ ctx: ctx, objectName: "myDesiredObjectKeyInMinio", value: s });
+console.log(result);	// { bucketName: "", objectName: "myDesiredObjectKeyInMinio" }
+```
+### Method getString
+```js 
+let s = await this.getString({ ctx: ctx, objectName: "myDesiredObjectKeyInMinio" });
+console.log(s);		// "any string"
+ 
+```
