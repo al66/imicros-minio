@@ -4,7 +4,7 @@ const { ServiceBroker } = require("moleculer");
 const { Minio } = require("../index");
 const { MinioMixin } = require("../index");
 const fs = require("fs");
-const uuid = require("uuid/v4");
+const { v4: uuid } = require("uuid");
 
 const timestamp = Date.now();
 
@@ -96,6 +96,24 @@ const Test = {
                 }
                 let result = await this.putStream({ ctx: ctx, objectName: ctx.params.objectName, stream: fstream });
                 return result;
+            }
+        },
+        putString: {
+            params: {
+                objectName: "string",
+                value: "string"
+            },
+            async handler(ctx) {
+                let result = await this.putString({ ctx: ctx, objectName: ctx.params.objectName, value: ctx.params.value });
+                return result;
+            }
+        },
+        getString: {
+            params: {
+                objectName: "string"
+            },
+            async handler(ctx) {
+                return await this.getString({ ctx: ctx, objectName: ctx.params.objectName });
             }
         }
     }
@@ -269,6 +287,76 @@ describe("Test mixin service", () => {
 
     });
 
+    describe("get string", () => {
+
+        let opts;
+        
+        beforeEach(() => {
+            opts = { 
+                meta: { 
+                    acl: {
+                        accessToken: "this is the access token",
+                        ownerId: `g1-${timestamp}`,
+                        unrestricted: true
+                    }, 
+                    user: { 
+                        id: `1-${timestamp}` , 
+                        email: `1-${timestamp}@host.com` }, 
+                    access: [`1-${timestamp}`, `2-${timestamp}`] 
+                } 
+            };
+        });
+        
+        it("it should put an string", () => {
+            let params = {
+                objectName: "test.txt",
+                value: "This is a string!"
+            };
+            return broker.call("test.putString", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res.objectName).toBeDefined();
+                expect(res.objectName).toEqual("test.txt");
+            });
+            
+        });
+        
+        it("it should get a string", async () => {
+            let params = {
+                objectName: "test.txt"
+            };
+            return broker.call("test.getString", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res).toEqual("This is a string!");
+            });
+                
+        });
+
+        it("it should put an string to object path", () => {
+            let params = {
+                objectName: "folder/folder/test.txt",
+                value: "This is a string!"
+            };
+            return broker.call("test.putString", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res.objectName).toBeDefined();
+                expect(res.objectName).toEqual("folder/folder/test.txt");
+            });
+            
+        });
+        
+        it("it should get a string with path", async () => {
+            let params = {
+                objectName: "folder/folder/test.txt"
+            };
+            return broker.call("test.getString", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res).toEqual("This is a string!");
+            });
+                
+        });
+
+    });
+
     describe("Clean up", () => {
 
         let opts;
@@ -297,6 +385,32 @@ describe("Test mixin service", () => {
                 expect(res).toBeDefined();
                 expect(res.objectName).toBeDefined();
                 expect(res.objectName).toEqual("imicros.png");
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
+            });
+            
+        });
+
+        it("it should remove object", () => {
+            let params = {
+                objectName: "test.txt"      
+            };
+            return broker.call("minio.removeObject", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res.objectName).toBeDefined();
+                expect(res.objectName).toEqual("test.txt");
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
+            });
+            
+        });
+
+        it("it should remove object", () => {
+            let params = {
+                objectName: "folder/folder/test.txt"      
+            };
+            return broker.call("minio.removeObject", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res.objectName).toBeDefined();
+                expect(res.objectName).toEqual("folder/folder/test.txt");
                 expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
             

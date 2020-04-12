@@ -6,7 +6,7 @@ const ApiGateway = require("moleculer-web");
 const request = require("supertest");
 
 const fs = require("fs");
-const uuid = require("uuid/v4");
+const { v4: uuid } = require("uuid");
 const _ = require("lodash");
 
 const timestamp = Date.now();
@@ -167,14 +167,14 @@ describe("Test upload to store service", () => {
                 middlewares: [middleware],
                 transporter: "tcp://localhost:6001/node-1,localhost:6002/node-2",
                 logger: console,
-                logLevel: "debug" // "info" //"debug"
+                logLevel: "error" // "info" //"debug"
             });
             gatewayBroker = new ServiceBroker({
                 nodeID: "node-2",
                 middlewares: [middleware],
                 transporter: "tcp://localhost:6001/node-1,localhost:6002/node-2",
                 logger: console,
-                logLevel: "info" //"debug"
+                logLevel: "error" //"debug"
             });
             gatewayService = await gatewayBroker.createService(ApiGateway,Gateway);
             keyService = await broker.createService(Keys);

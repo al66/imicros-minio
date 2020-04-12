@@ -3,7 +3,7 @@
 const { ServiceBroker } = require("moleculer");
 const { Minio } = require("../index");
 const fs = require("fs");
-const uuid = require("uuid/v4");
+const { v4: uuid } = require("uuid");
 
 const timestamp = Date.now();
 
