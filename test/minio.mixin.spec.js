@@ -115,6 +115,24 @@ const Test = {
             async handler(ctx) {
                 return await this.getString({ ctx: ctx, objectName: ctx.params.objectName });
             }
+        },
+        putObject: {
+            params: {
+                objectName: "string",
+                value: "object"
+            },
+            async handler(ctx) {
+                let result = await this.putObject({ ctx: ctx, objectName: ctx.params.objectName, value: ctx.params.value });
+                return result;
+            }
+        },
+        getObject: {
+            params: {
+                objectName: "string"
+            },
+            async handler(ctx) {
+                return await this.getObject({ ctx: ctx, objectName: ctx.params.objectName });
+            }
         }
     }
 };
@@ -355,6 +373,35 @@ describe("Test mixin service", () => {
                 
         });
 
+        it("it should put an object", () => {
+            let params = {
+                objectName: "object.json",
+                value: {
+                    test: 1	
+                }
+            };
+            return broker.call("test.putObject", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res.objectName).toBeDefined();
+                expect(res.objectName).toEqual("object.json");
+            });
+            
+        });
+        
+        it("it should get an object", async () => {
+            let params = {
+                objectName: "object.json"
+            };
+            return broker.call("test.getObject", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res).toEqual({
+                    test: 1	
+                });
+            });
+                
+        });
+
+		
     });
 
     describe("Clean up", () => {
@@ -411,6 +458,19 @@ describe("Test mixin service", () => {
                 expect(res).toBeDefined();
                 expect(res.objectName).toBeDefined();
                 expect(res.objectName).toEqual("folder/folder/test.txt");
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
+            });
+            
+        });
+
+        it("it should remove object", () => {
+            let params = {
+                objectName: "object.json"      
+            };
+            return broker.call("minio.removeObject", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res.objectName).toBeDefined();
+                expect(res.objectName).toEqual("object.json");
                 expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
             
