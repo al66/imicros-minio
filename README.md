@@ -119,3 +119,17 @@ let s = await this.getString({ ctx: ctx, objectName: "myDesiredObjectKeyInMinio"
 console.log(s);		// "any string"
  
 ```
+### Method putObject
+Use of JSON.stringify to convert value to string
+```js 
+let value = { key: "value" };
+let result = await this.putObject({ ctx: ctx, objectName: "myDesiredObjectKeyInMinio", value: value });
+console.log(result);	// { bucketName: "", objectName: "myDesiredObjectKeyInMinio" }
+```
+### Method getObject
+Use of JSON.parse to convert string back to object
+```js 
+let value = await this.getString({ ctx: ctx, objectName: "myDesiredObjectKeyInMinio" });
+console.log(value);		// { key: "value" }
+ 
+```
