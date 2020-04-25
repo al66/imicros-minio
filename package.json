@@ -1,6 +1,6 @@
 {
   "name": "imicros-minio",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Andreas Leinen <andreas.leinen@imicros.de> (www.imicros.de)",
   "license": "MIT",
   "description": "Moleculer service for minio object storage",
@@ -11,6 +11,7 @@
     "test-local": "jest --coverage --no-cache --config=local.js",
     "test-unit": "jest test/minio.spec.js --no-cache --config=local.js",
     "test-mixin": "jest test/minio.mixin.spec.js --no-cache --config=local.js",
+    "test-secrets": "jest test/secrets.mixin.spec.js --no-cache",
     "test-gateway": "jest test/gateway.spec.js --no-cache --config=local.js"
   },
   "jest": {

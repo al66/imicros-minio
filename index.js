@@ -5,5 +5,6 @@
 
 module.exports = {
     Minio: require("./lib/minio"),
-    MinioMixin: require("./lib/minio.mixin")
+    MinioMixin: require("./lib/minio.mixin"),
+    SecretsMixin: require("./lib/secrets.mixin")
 };
