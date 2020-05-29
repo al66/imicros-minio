@@ -200,6 +200,7 @@ describe("Test mixin service", () => {
         beforeEach(() => {
             opts = { 
                 meta: { 
+                    ownerId: `g1-${timestamp}`,
                     acl: {
                         accessToken: "this is the access token",
                         ownerId: `g1-${timestamp}`,
@@ -207,8 +208,7 @@ describe("Test mixin service", () => {
                     }, 
                     user: { 
                         id: `1-${timestamp}` , 
-                        email: `1-${timestamp}@host.com` }, 
-                    access: [`1-${timestamp}`, `2-${timestamp}`] 
+                        email: `1-${timestamp}@host.com` } 
                 } 
             };
         });
@@ -232,6 +232,7 @@ describe("Test mixin service", () => {
         beforeEach(() => {
             opts = { 
                 meta: { 
+                    ownerId: `g1-${timestamp}`,
                     acl: {
                         accessToken: "this is the access token",
                         ownerId: `g1-${timestamp}`,
@@ -239,8 +240,7 @@ describe("Test mixin service", () => {
                     }, 
                     user: { 
                         id: `1-${timestamp}` , 
-                        email: `1-${timestamp}@host.com` }, 
-                    access: [`1-${timestamp}`, `2-${timestamp}`] 
+                        email: `1-${timestamp}@host.com` }
                 } 
             };
         });
@@ -312,15 +312,14 @@ describe("Test mixin service", () => {
         beforeEach(() => {
             opts = { 
                 meta: { 
+                    ownerId: `g1-${timestamp}`,
                     acl: {
                         accessToken: "this is the access token",
-                        ownerId: `g1-${timestamp}`,
                         unrestricted: true
                     }, 
                     user: { 
                         id: `1-${timestamp}` , 
-                        email: `1-${timestamp}@host.com` }, 
-                    access: [`1-${timestamp}`, `2-${timestamp}`] 
+                        email: `1-${timestamp}@host.com` } 
                 } 
             };
         });
@@ -411,6 +410,7 @@ describe("Test mixin service", () => {
         beforeEach(() => {
             opts = { 
                 meta: { 
+                    ownerId: `g1-${timestamp}`,
                     acl: {
                         accessToken: "this is the access token",
                         ownerId: `g1-${timestamp}`,
@@ -418,8 +418,7 @@ describe("Test mixin service", () => {
                     }, 
                     user: { 
                         id: `1-${timestamp}` , 
-                        email: `1-${timestamp}@host.com` }, 
-                    access: [`1-${timestamp}`, `2-${timestamp}`] 
+                        email: `1-${timestamp}@host.com` }
                 } 
             };
         });

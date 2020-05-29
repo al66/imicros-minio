@@ -92,6 +92,7 @@ describe("Test store service", () => {
         beforeEach(() => {
             opts = { 
                 meta: { 
+                    ownerId: `g1-${timestamp}`,
                     acl: {
                         accessToken: "this is the access token",
                         ownerId: `g1-${timestamp}`,
@@ -99,8 +100,7 @@ describe("Test store service", () => {
                     }, 
                     user: { 
                         id: `1-${timestamp}` , 
-                        email: `1-${timestamp}@host.com` }, 
-                    access: [`1-${timestamp}`, `2-${timestamp}`] 
+                        email: `1-${timestamp}@host.com` } 
                 } 
             };
         });
@@ -116,6 +116,7 @@ describe("Test store service", () => {
         });
         
         it("it should create a bucket for 2. owner", () => {
+            opts.meta.ownerId = `g2-${timestamp}`;
             opts.meta.acl.ownerId = `g2-${timestamp}`;
             let params = {};
             return broker.call("minio.makeBucket", params, opts).then(res => {
@@ -135,6 +136,7 @@ describe("Test store service", () => {
         beforeEach(() => {
             opts = { 
                 meta: { 
+                    ownerId: `g1-${timestamp}`,
                     acl: {
                         accessToken: "this is the access token",
                         ownerId: `g1-${timestamp}`,
@@ -142,8 +144,7 @@ describe("Test store service", () => {
                     }, 
                     user: { 
                         id: `1-${timestamp}` , 
-                        email: `1-${timestamp}@host.com` }, 
-                    access: [`1-${timestamp}`, `2-${timestamp}`] 
+                        email: `1-${timestamp}@host.com` }
                 } 
             };
         });
@@ -313,7 +314,12 @@ describe("Test store service", () => {
     describe("Test admin", () => {
     
         it("it should list all buckets", async () => {
-            let opts = { meta: { acl: { ownerId: adminGroup } } };
+            let opts = { 
+                meta: { 
+                    ownerId: adminGroup,
+                    acl: { ownerId: adminGroup }
+                } 
+            };
             let params = {
             };
             let res = await broker.call("minio.listBuckets", params, opts);
@@ -331,6 +337,7 @@ describe("Test store service", () => {
         beforeEach(() => {
             opts = { 
                 meta: { 
+                    ownerId: `g1-${timestamp}`,
                     acl: {
                         accessToken: "this is the access token",
                         ownerId: `g1-${timestamp}`,
@@ -338,8 +345,7 @@ describe("Test store service", () => {
                     }, 
                     user: { 
                         id: `1-${timestamp}` , 
-                        email: `1-${timestamp}@host.com` }, 
-                    access: [`1-${timestamp}`, `2-${timestamp}`] 
+                        email: `1-${timestamp}@host.com` } 
                 } 
             };
         });
@@ -355,6 +361,7 @@ describe("Test store service", () => {
         });
         
         it("it should remove bucket for 2. owner", () => {
+            opts.meta.ownerId = `g2-${timestamp}`;
             opts.meta.acl.ownerId = `g2-${timestamp}`;
             let params = {};
             return broker.call("minio.removeBucket", params, opts).then(res => {
