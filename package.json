@@ -8,8 +8,8 @@
   "scripts": {
     "lint": "eslint . --ext .js,.jsx",
     "test": "jest --coverage --no-cache",
-    "test-local": "jest --coverage --no-cache --config=local.js",
-    "test-unit": "jest test/minio.spec.js --no-cache --config=local.js",
+    "test-local": "jest --coverage --no-cache --silent --config=local.js",
+    "test-minio": "jest test/minio.spec.js --no-cache --config=local.js",
     "test-mixin": "jest test/minio.mixin.spec.js --no-cache --config=local.js",
     "test-secrets": "jest test/secrets.mixin.spec.js --no-cache",
     "test-gateway": "jest test/gateway.spec.js --no-cache --config=local.js"
@@ -34,17 +34,17 @@
   ],
   "devDependencies": {
     "busboy": "^0.3.1",
-    "coveralls": "^3.0.11",
-    "jest": "^25.3.0",
-    "moleculer": "^0.14.6",
-    "nats": "^1.4.8",
+    "coveralls": "^3.1.0",
+    "jest": "^26.4.2",
+    "moleculer": "^0.14.10",
+    "moleculer-web": "^0.9.1",
+    "nats": "^1.4.12",
     "supertest": "^4.0.2"
   },
   "dependencies": {
-    "imicros-acl": "0.0.4",
-    "lodash": "^4.17.15",
-    "minio": "^7.0.15",
-    "moleculer-web": "git+https://github.com/moleculerjs/moleculer-web.git",
-    "uuid": "^7.0.3"
+    "imicros-acl": "0.0.6",
+    "lodash": "^4.17.20",
+    "minio": "^7.0.16",
+    "uuid": "^8.3.0"
   }
 }
