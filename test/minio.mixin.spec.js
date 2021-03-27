@@ -45,6 +45,8 @@ const Test = {
                     let fstream;
                     if (ctx.params.objectName === "big.txt") {
                         fstream = fs.createWriteStream("assets/big."+ timestamp +".txt");
+                    } else if (ctx.params.objectName === "imicros.piped.png") {
+                        fstream = fs.createWriteStream("assets/imicros.piped."+ timestamp +".png");
                     } else {
                         fstream = fs.createWriteStream("assets/imicros."+ timestamp +".png");
                     }
@@ -79,7 +81,7 @@ const Test = {
                     });
                 };
                 await pipe();
-                
+
                 return { objectName: ctx.params.objectName };
             }
         },
@@ -156,7 +158,8 @@ describe("Test mixin service", () => {
             fs.unlinkSync("assets/big.txt");
             fs.unlinkSync("assets/big."+ timestamp +".txt");
             fs.unlinkSync("assets/imicros."+ timestamp +".png");
-          //file removed
+            fs.unlinkSync("assets/imicros.piped."+ timestamp +".png");
+            //file removed
         } catch(err) {
             console.error(err);
         }    
@@ -247,14 +250,26 @@ describe("Test mixin service", () => {
         
         it("it should put an object as piped stream", () => {
             let params = {
-                objectName: "imicros.png"
+                objectName: "imicros.piped.png"
             };
             return broker.call("test.pipeStream", params, opts).then(res => {
                 expect(res).toBeDefined();
                 expect(res.objectName).toBeDefined();
-                expect(res.objectName).toEqual("imicros.png");
+                expect(res.objectName).toEqual("imicros.piped.png");
             });
             
+        });
+
+        it("it should get the piped object", async () => {
+            let params = {
+                objectName: "imicros.piped.png"
+            };
+            return broker.call("test.getStream", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res.objectName).toBeDefined();
+                expect(res.objectName).toEqual("imicros.piped.png");
+            });
+                
         });
         
         it("it should put an object as readable stream", () => {
@@ -431,6 +446,19 @@ describe("Test mixin service", () => {
                 expect(res).toBeDefined();
                 expect(res.objectName).toBeDefined();
                 expect(res.objectName).toEqual("imicros.png");
+                expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
+            });
+            
+        });
+
+        it("it should remove object", () => {
+            let params = {
+                objectName: "imicros.piped.png"      
+            };
+            return broker.call("minio.removeObject", params, opts).then(res => {
+                expect(res).toBeDefined();
+                expect(res.objectName).toBeDefined();
+                expect(res.objectName).toEqual("imicros.piped.png");
                 expect(res.bucketName).toEqual(opts.meta.acl.ownerId);
             });
             

@@ -1,6 +1,6 @@
 {
   "name": "imicros-minio",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": "Andreas Leinen <andreas.leinen@imicros.de> (www.imicros.de)",
   "license": "MIT",
   "description": "Moleculer service for minio object storage",
@@ -35,16 +35,16 @@
   "devDependencies": {
     "busboy": "^0.3.1",
     "coveralls": "^3.1.0",
-    "jest": "^26.4.2",
-    "moleculer": "^0.14.10",
+    "jest": "^26.6.3",
+    "moleculer": "^0.14.12",
     "moleculer-web": "^0.9.1",
     "nats": "^1.4.12",
     "supertest": "^4.0.2"
   },
   "dependencies": {
     "imicros-acl": "0.0.6",
-    "lodash": "^4.17.20",
-    "minio": "^7.0.16",
-    "uuid": "^8.3.0"
+    "lodash": "^4.17.21",
+    "minio": "^7.0.18",
+    "uuid": "^8.3.2"
   }
 }
